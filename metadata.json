@@ -1,0 +1,6 @@
+{
+  "name": "Daily Planner",
+  "description": "A beautifully polished ToDo planning app built using Room Database, modern Jetpack Compose and clean MVVM architecture.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
