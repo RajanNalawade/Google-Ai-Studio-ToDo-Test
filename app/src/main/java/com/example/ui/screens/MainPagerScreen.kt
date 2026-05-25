@@ -1,6 +1,5 @@
 package com.example.ui.screens
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -28,10 +27,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -45,10 +42,9 @@ fun MainPagerScreen(
     onNavigateToCategory: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    // We have 2 pages: 0 = Tasks/Todo list, 1 = Analytics dashboard
-    val pagerState = rememberPagerState(pageCount = { 2 })
+    // We now have 4 pages representing each tab
+    val pagerState = rememberPagerState(pageCount = { 4 })
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -76,7 +72,7 @@ fun MainPagerScreen(
                                 pagerState.animateScrollToPage(0)
                             }
                         }
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .padding(horizontal = 14.dp, vertical = 8.dp)
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.Assignment,
@@ -94,39 +90,39 @@ fun MainPagerScreen(
                     )
                 }
 
-                // Decorative calendar button
+                // Page 1: Calendar Tab
+                val isCalendar = pagerState.currentPage == 1
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
                     modifier = Modifier
-                        .alpha(0.6f)
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(if (isCalendar) Color(0xFFE8DEF8) else Color.Transparent)
                         .clickable {
-                            Toast.makeText(
-                                context,
-                                "Calendar overview is coming in a future update!",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            scope.launch {
+                                pagerState.animateScrollToPage(1)
+                            }
                         }
+                        .padding(horizontal = 14.dp, vertical = 8.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Default.CalendarToday,
                         contentDescription = "Calendar",
-                        tint = Color(0xFF49454F),
+                        tint = if (isCalendar) Color(0xFF1D192B) else Color(0xFF49454F),
                         modifier = Modifier.size(24.dp)
                     )
                     Text(
                         text = "Calendar",
                         style = MaterialTheme.typography.labelSmall.copy(
-                            fontWeight = FontWeight.Medium,
-                            color = Color(0xFF49454F),
+                            fontWeight = if (isCalendar) FontWeight.Bold else FontWeight.Medium,
+                            color = if (isCalendar) Color(0xFF1D192B) else Color(0xFF49454F),
                             fontSize = 11.sp
                         )
                     )
                 }
 
-                // Page 1: Analytics/Stats Tab
-                val isStats = pagerState.currentPage == 1
+                // Page 2: Analytics/Stats Tab
+                val isStats = pagerState.currentPage == 2
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
@@ -135,10 +131,10 @@ fun MainPagerScreen(
                         .background(if (isStats) Color(0xFFE8DEF8) else Color.Transparent)
                         .clickable {
                             scope.launch {
-                                pagerState.animateScrollToPage(1)
+                                pagerState.animateScrollToPage(2)
                             }
                         }
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .padding(horizontal = 14.dp, vertical = 8.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Analytics,
@@ -156,32 +152,32 @@ fun MainPagerScreen(
                     )
                 }
 
-                // Decorative settings button
+                // Page 3: Settings Tab
+                val isSettings = pagerState.currentPage == 3
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
                     modifier = Modifier
-                        .alpha(0.6f)
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(if (isSettings) Color(0xFFE8DEF8) else Color.Transparent)
                         .clickable {
-                            Toast.makeText(
-                                context,
-                                "Settings overview is coming in a future update!",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            scope.launch {
+                                pagerState.animateScrollToPage(3)
+                            }
                         }
+                        .padding(horizontal = 14.dp, vertical = 8.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Settings,
                         contentDescription = "Settings",
-                        tint = Color(0xFF49454F),
+                        tint = if (isSettings) Color(0xFF1D192B) else Color(0xFF49454F),
                         modifier = Modifier.size(24.dp)
                     )
                     Text(
                         text = "Settings",
                         style = MaterialTheme.typography.labelSmall.copy(
-                            fontWeight = FontWeight.Medium,
-                            color = Color(0xFF49454F),
+                            fontWeight = if (isSettings) FontWeight.Bold else FontWeight.Medium,
+                            color = if (isSettings) Color(0xFF1D192B) else Color(0xFF49454F),
                             fontSize = 11.sp
                         )
                     )
@@ -201,9 +197,18 @@ fun MainPagerScreen(
                     onNavigateToDetail = onNavigateToDetail,
                     modifier = Modifier.fillMaxSize()
                 )
-                1 -> StatsScreen(
+                1 -> CalendarScreen(
+                    viewModel = viewModel,
+                    onNavigateToDetail = onNavigateToDetail,
+                    modifier = Modifier.fillMaxSize()
+                )
+                2 -> StatsScreen(
                     viewModel = viewModel,
                     onNavigateToCategory = onNavigateToCategory,
+                    modifier = Modifier.fillMaxSize()
+                )
+                3 -> SettingsScreen(
+                    viewModel = viewModel,
                     modifier = Modifier.fillMaxSize()
                 )
             }

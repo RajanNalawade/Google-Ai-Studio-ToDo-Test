@@ -174,6 +174,64 @@ class TodoViewModel(private val repository: TodoRepository) : ViewModel() {
             closeAddEditDialog()
         }
     }
+
+    fun deleteAllTodos() {
+        viewModelScope.launch {
+            repository.deleteAllTodos()
+        }
+    }
+
+    fun importSampleData() {
+        viewModelScope.launch {
+            val today = System.currentTimeMillis()
+            val oneDayMs = 24 * 60 * 60 * 1000L
+            val samples = listOf(
+                TodoEntity(
+                    title = "Submit Q2 Tech Proposal",
+                    description = "Refine architecture diagrams and share with lead engineering committee",
+                    priority = "HIGH",
+                    category = "Work",
+                    dueDate = today + oneDayMs,
+                    isCompleted = false
+                ),
+                TodoEntity(
+                    title = "Weekend Grocery Shopping",
+                    description = "Avocados, almond milk, organic eggs, sourdough bread, cold coffee",
+                    priority = "LOW",
+                    category = "Shopping",
+                    dueDate = today + 3 * oneDayMs,
+                    isCompleted = false
+                ),
+                TodoEntity(
+                    title = "HIIT Cardio Workout",
+                    description = "45 mins interval training - sprints and kettlebell circuits at the park",
+                    priority = "MEDIUM",
+                    category = "Fitness",
+                    dueDate = today + 2 * oneDayMs,
+                    isCompleted = true
+                ),
+                TodoEntity(
+                    title = "Buy Mom's Anniversary Gift",
+                    description = "Pick up custom engraved locket from jeweler downtown before 6 PM",
+                    priority = "HIGH",
+                    category = "Personal",
+                    dueDate = today,
+                    isCompleted = false
+                ),
+                TodoEntity(
+                    title = "Retrospective Slide Prep",
+                    description = "Outline team hurdles and technical wins from the latest dev cycle",
+                    priority = "MEDIUM",
+                    category = "Work",
+                    dueDate = today + oneDayMs,
+                    isCompleted = true
+                )
+            )
+            for (todo in samples) {
+                repository.insertTodo(todo)
+            }
+        }
+    }
 }
 
 class TodoViewModelFactory(private val repository: TodoRepository) : ViewModelProvider.Factory {
